@@ -1,0 +1,206 @@
+/* OVERLAY & MODAL */
+.overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
+}
+.modal {
+  background: #111113;
+  border: 1px solid #2e2e32;
+  border-radius: 8px;
+  width: 100%; max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: scaleIn 0.2s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* HEADER */
+.modal-hd {
+  padding: 22px 22px 16px;
+  border-bottom: 1px solid #2e2e32;
+  position: sticky; top: 0;
+  background: #111113; z-index: 1;
+}
+.modal-hd-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.modal-name-row { display: flex; align-items: center; gap: 8px; }
+.modal-name { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: #fff; }
+.origin-badge-lg {
+  font-size: 10px; font-family: 'Geist Mono', monospace; font-weight: 600;
+  letter-spacing: 0.08em; padding: 2px 7px; border-radius: 4px; border: 1px solid;
+}
+.origin-badge-lg.br { color: #4ade80; border-color: rgba(74,222,128,0.35); background: rgba(74,222,128,0.08); }
+.origin-badge-lg.global { color: #8c8c99; border-color: #2e2e32; background: #18181b; }
+.modal-domain { font-size: 12px; color: #8c8c99; font-family: 'Geist Mono', monospace; margin-top: 3px; }
+.modal-tagline { font-size: 15px; color: #c4c4cc; line-height: 1.6; margin-top: 10px; }
+.modal-meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.modal-meta-chip {
+  padding: 3px 9px; border: 1px solid #2e2e32; border-radius: 9999px;
+  font-size: 11px; font-family: 'Geist Mono', monospace; color: #8c8c99; background: #18181b;
+}
+.modal-meta-chip.funded { color: #4ade80; border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.06); }
+.modal-close {
+  width: 30px; height: 30px; flex-shrink: 0;
+  background: #18181b; border: 1px solid #2e2e32; border-radius: 6px;
+  color: #8c8c99; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.modal-close:hover { border-color: #4a4a52; color: #fff; }
+
+/* BODY */
+.modal-bd { padding: 20px 22px; display: flex; flex-direction: column; gap: 24px; }
+
+/* SECTION */
+.msec { display: flex; flex-direction: column; gap: 12px; }
+.msec-title {
+  font-size: 10px; font-family: 'Geist Mono', monospace;
+  text-transform: uppercase; letter-spacing: 0.1em; color: #8c8c99;
+  display: flex; align-items: center; gap: 10px;
+}
+.msec-title::after { content: ''; flex: 1; height: 1px; background: #2e2e32; }
+.ms-text { font-size: 14px; color: #c4c4cc; line-height: 1.75; }
+
+/* CHARTS ROW */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.chart-card {
+  background: #18181b; border: 1px solid #2e2e32; border-radius: 6px;
+  padding: 14px; display: flex; flex-direction: column; gap: 10px;
+}
+.chart-card-title {
+  font-size: 10px; font-family: 'Geist Mono', monospace;
+  text-transform: uppercase; letter-spacing: 0.08em; color: #8c8c99;
+}
+
+/* RADIAL */
+.radial-wrap { position: relative; width: 72px; height: 72px; margin: 0 auto; }
+.radial-svg { width: 100%; height: 100%; }
+.radial-label {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; font-family: 'Geist Mono', monospace;
+  color: #fff; letter-spacing: -0.02em;
+}
+
+/* MARKET SIZE VIZ */
+.market-size-viz { display: flex; flex-direction: column; gap: 7px; }
+.ms-bar-wrap { height: 6px; background: #2e2e32; border-radius: 3px; overflow: hidden; }
+.ms-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.ms-size-label { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; font-family: 'Geist Mono', monospace; }
+.ms-share { font-size: 11px; color: #8c8c99; font-family: 'Geist Mono', monospace; }
+.ms-clients { font-size: 11px; color: #c4c4cc; font-family: 'Geist Mono', monospace; }
+
+/* SEO VIZ */
+.seo-viz { display: flex; flex-direction: column; gap: 8px; }
+.seo-metric { display: flex; flex-direction: column; gap: 1px; }
+.seo-metric-val { font-size: 16px; font-weight: 700; color: #fff; font-family: 'Geist Mono', monospace; letter-spacing: -0.02em; }
+.seo-metric-lbl { font-size: 10px; color: #8c8c99; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; }
+.seo-keywords { display: flex; flex-wrap: wrap; gap: 4px; }
+.seo-kw {
+  padding: 2px 6px; background: #111113; border: 1px solid #2e2e32;
+  border-radius: 3px; font-size: 10px; font-family: 'Geist Mono', monospace; color: #8c8c99;
+}
+
+/* DIFFERENTIATORS */
+.diff-list { display: flex; flex-direction: column; gap: 8px; }
+.diff-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; color: #c4c4cc; line-height: 1.5;
+}
+.diff-icon { color: #fff; font-size: 8px; flex-shrink: 0; margin-top: 4px; }
+
+/* PRICING */
+.pricing-starting { font-size: 13px; color: #8c8c99; margin-bottom: 10px; }
+.pricing-starting strong { color: #fff; }
+.plans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.plan-card {
+  background: #18181b; border: 1px solid #2e2e32; border-radius: 6px;
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+}
+.plan-name { font-size: 10px; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; color: #8c8c99; }
+.plan-price { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -0.02em; font-family: 'Geist Mono', monospace; }
+.plan-highlight { font-size: 11px; color: #8c8c99; margin-top: 2px; }
+
+/* FUNDING */
+.funding-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 10px; }
+.funding-stat { display: flex; flex-direction: column; gap: 3px; }
+.funding-val { font-size: 18px; font-weight: 700; color: #fff; font-family: 'Geist Mono', monospace; letter-spacing: -0.02em; }
+.funding-lbl { font-size: 10px; color: #8c8c99; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; }
+.investors-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.investor-tag {
+  padding: 3px 10px; border: 1px solid rgba(74,222,128,0.25);
+  border-radius: 9999px; font-size: 11px; color: #4ade80;
+  background: rgba(74,222,128,0.05); font-family: 'Geist Mono', monospace;
+}
+
+/* PILLS */
+.pill-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.mtag {
+  padding: 4px 10px; border-radius: 9999px; font-size: 11px;
+  border: 1px solid; font-family: 'Geist Mono', monospace;
+}
+.mtag-default { color: #8c8c99; border-color: #2e2e32; background: #18181b; }
+.mtag-partner { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.06); }
+.mtag-client { color: #60a5fa; border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.06); }
+
+/* TWO COL */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 520px) { .two-col { grid-template-columns: 1fr; } }
+
+/* TARGET MARKET */
+.target-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.target-cell { display: flex; flex-direction: column; gap: 6px; }
+.target-lbl { font-size: 10px; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; color: #8c8c99; }
+.target-val { font-size: 13px; color: #ebebef; }
+
+/* S/W */
+.sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sw-col { background: #18181b; border: 1px solid #2e2e32; border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.sw-lbl { font-size: 10px; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+.sw-lbl.s { color: #22c55e; }
+.sw-lbl.w { color: #ef4444; }
+.sw-item { display: flex; gap: 7px; font-size: 13px; color: #c4c4cc; line-height: 1.5; align-items: flex-start; }
+.sw-sign { font-size: 14px; flex-shrink: 0; font-weight: 700; }
+.sw-sign.s { color: #22c55e; }
+.sw-sign.w { color: #ef4444; }
+
+/* INSIGHT */
+.insight-block {
+  background: #18181b; border: 1px solid #2e2e32; border-left: 2px solid #4a4a52;
+  border-radius: 6px; padding: 14px 16px;
+  font-size: 13px; color: #c4c4cc; line-height: 1.7; font-style: italic;
+}
+
+/* FOOTER */
+.modal-ft {
+  padding: 14px 22px; border-top: 1px solid #2e2e32;
+  display: flex; align-items: center; gap: 10px;
+}
+.modal-btn {
+  padding: 7px 16px; border-radius: 5px;
+  font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.modal-btn.add { background: #fff; color: #09090b; border: none; }
+.modal-btn.add:hover { background: #ebebef; }
+.modal-btn.remove { background: transparent; color: #8c8c99; border: 1px solid #2e2e32; }
+.modal-btn.remove:hover { border-color: #ef4444; color: #ef4444; }
+.modal-link {
+  margin-left: auto; font-size: 12px; color: #8c8c99;
+  font-family: 'Geist Mono', monospace; text-decoration: none;
+  transition: color 0.15s;
+}
+.modal-link:hover { color: #fff; }
+
+/* SCORE BAR */
+.score-row { display: flex; align-items: center; gap: 10px; }
+.score-lbl { font-size: 11px; color: #8c8c99; width: 80px; flex-shrink: 0; font-family: 'Geist Mono', monospace; }
+.score-track { flex: 1; height: 4px; background: #2e2e32; border-radius: 2px; overflow: hidden; }
+.score-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+.score-val { font-size: 11px; color: #8c8c99; width: 30px; text-align: right; font-family: 'Geist Mono', monospace; }

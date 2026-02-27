@@ -1,0 +1,16 @@
+.skel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+.skel-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  animation: pulse 1.6s ease infinite;
+}
+.skel-block {
+  background: var(--card2);
+  border-radius: 3px;
+}

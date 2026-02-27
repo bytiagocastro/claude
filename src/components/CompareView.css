@@ -1,0 +1,49 @@
+.compare-view { animation: fadeUp 0.3s ease; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-bottom: 20px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-3);
+  font-family: 'Geist', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.back-btn:hover { border-color: var(--border-md); color: var(--fg); }
+.compare-hd { margin-bottom: 20px; }
+.compare-title { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; color: var(--fg); }
+.compare-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.compare-table { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.ct-header-row { display: grid; border-bottom: 1px solid var(--border); background: var(--card2); }
+.ct-row { display: grid; border-bottom: 1px solid var(--border); }
+.ct-row:last-child { border-bottom: none; }
+.ct-row:nth-child(even) { background: rgba(255,255,255,0.01); }
+.ct-label-cell {
+  padding: 12px 16px;
+  border-right: 1px solid var(--border);
+  font-size: 11px;
+  font-family: 'Geist Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: var(--card2);
+  display: flex; align-items: flex-start;
+  width: 140px; min-width: 140px;
+}
+.ct-header-spacer { width: 140px; min-width: 140px; padding: 12px 16px; border-right: 1px solid var(--border); }
+.ct-col-header { padding: 12px 16px; border-right: 1px solid var(--border); flex: 1; }
+.ct-col-header:last-child { border-right: none; }
+.ct-col-name { font-size: 13px; font-weight: 600; color: var(--fg); letter-spacing: -0.01em; }
+.ct-col-domain { font-size: 10px; color: var(--muted); font-family: 'Geist Mono', monospace; margin-top: 2px; }
+.ct-cell { padding: 12px 16px; flex: 1; border-right: 1px solid var(--border); font-size: 12px; color: var(--fg-3); line-height: 1.6; }
+.ct-cell:last-child { border-right: none; }
+.ct-pain-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.ct-pain { display: flex; gap: 6px; align-items: flex-start; font-size: 11px; color: var(--fg-3); line-height: 1.5; }
+.ct-pain-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); flex-shrink: 0; margin-top: 5px; }
+.rel-cell { display: flex; align-items: center; gap: 8px; }
+.rel-bar-lg { flex: 1; height: 3px; background: var(--subtle); border-radius: 2px; overflow: hidden; }
+.rel-fill-lg { height: 100%; background: var(--fg-2); border-radius: 2px; }
+.rel-pct { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--fg-3); }
