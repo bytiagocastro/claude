@@ -1,6 +1,7 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
   res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Cache-Control', 'no-store')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   if (req.method === 'OPTIONS') return res.status(200).end()
@@ -12,17 +13,18 @@ export default async function handler(req, res) {
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' })
 
-  const prompt = `Voce e um analista de inteligencia competitiva especializado no mercado brasileiro.
-Analise o segmento: "${query.trim()}" no Brasil.
+  const prompt = `You are a competitive intelligence analyst specializing in the Brazilian market.
+Analyze the segment: "${query.trim()}" in Brazil.
 
-REGRAS CRITICAS:
-- Retorne APENAS JSON puro. Zero markdown. Zero explicacao. Comece direto com {
-- Use APENAS caracteres ASCII dentro das strings. Proibido: travessao (--), aspas curvas, reticencias unicode
-- Use hifen simples - no lugar de travessao
-- Minimo 70% empresas brasileiras
-- TODOS os textos em portugues brasileiro
-- Valores monetarios sempre em R$ (reais)
-- Retorne 12-15 competidores reais, ordenados por relevanceScore desc
+CRITICAL RULES:
+- Return ONLY raw JSON. No markdown. No explanation. Start directly with {
+- Use ONLY ASCII characters in strings. No em-dashes, no curly quotes
+- Use simple hyphen - instead of dash
+- At least 70% Brazilian companies
+- ALL text values must be in Brazilian Portuguese (pt-BR)
+- Market size and monetary values in Brazilian Reais (R$)
+- Return 12-15 real competitors sorted by relevanceScore desc
+- segment.marketSize format: "R$ XB" or "R$ XM"
 
 Schema exato a seguir:
 {
@@ -104,7 +106,10 @@ Se nao souber um valor, use null para campos opcionais ou string vazia`
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+          { role: 'user', content: prompt },
+          { role: 'assistant', content: '{"segment":{"name":"' }
+        ],
       }),
     })
 
@@ -116,7 +121,8 @@ Se nao souber um valor, use null para campos opcionais ou string vazia`
     const data = await response.json()
     if (!data.content?.length) return res.status(502).json({ error: 'Empty response' })
 
-    let text = data.content.filter(b => b.type === 'text').map(b => b.text).join('')
+    // Prepend the assistant prefill that was used to start the JSON
+    let text = '{"segment":{"name":"' + data.content.filter(b => b.type === 'text').map(b => b.text).join('')
 
     text = text
       .replace(/```(?:json)?/g, '')
