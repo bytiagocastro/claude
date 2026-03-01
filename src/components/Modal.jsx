@@ -1,45 +1,72 @@
 import './Modal.css'
 
-function ScoreBar({ label, value, max = 100, color = 'var(--fg-2)' }) {
-  const pct = Math.round((value / max) * 100)
+// Labels section header
+function Sec({ title }) {
+  return <div className="msec-title"><span>{title}</span></div>
+}
+
+// Colored pill tag
+function Pill({ children, variant = 'default' }) {
+  return <span className={`mpill mpill-${variant}`}>{children}</span>
+}
+
+// Radial score chart (SVG)
+function Radial({ value, label, color = '#fff' }) {
+  const r = 28
+  const circ = 2 * Math.PI * r
+  const fill = (value / 100) * circ
   return (
-    <div className="score-row">
-      <span className="score-lbl">{label}</span>
-      <div className="score-track">
-        <div className="score-fill" style={{ width: `${pct}%`, background: color }} />
+    <div className="radial-wrap">
+      <svg viewBox="0 0 72 72" className="radial-svg">
+        <circle cx="36" cy="36" r={r} fill="none" stroke="#303038" strokeWidth="5" />
+        <circle
+          cx="36" cy="36" r={r} fill="none"
+          stroke={color} strokeWidth="5"
+          strokeDasharray={`${fill} ${circ}`}
+          strokeLinecap="round"
+          transform="rotate(-90 36 36)"
+          style={{ transition: 'stroke-dasharray 0.8s ease' }}
+        />
+      </svg>
+      <div className="radial-inner">
+        <div className="radial-val" style={{ color }}>{value}</div>
+        <div className="radial-lbl">{label}</div>
       </div>
-      <span className="score-val">{value}</span>
     </div>
   )
 }
 
-function Tag({ children, variant = 'default' }) {
-  return <span className={`mtag mtag-${variant}`}>{children}</span>
-}
-
-function Section({ title, children }) {
+// Horizontal bar metric
+function BarMetric({ label, value, pct, color = '#fff' }) {
   return (
-    <div className="msec">
-      <div className="msec-title">{title}</div>
-      {children}
+    <div className="bar-metric">
+      <div className="bar-metric-top">
+        <span className="bar-metric-lbl">{label}</span>
+        <span className="bar-metric-val" style={{ color }}>{value}</span>
+      </div>
+      <div className="bar-track">
+        <div className="bar-fill" style={{ width: `${pct}%`, background: color }} />
+      </div>
     </div>
   )
 }
+
+const SIZE_COLOR = { Grande: '#34d47a', Medio: '#f5a623', Pequeno: '#7c6af7', Niche: '#60a5fa', Large: '#34d47a', Medium: '#f5a623', Small: '#7c6af7' }
+const SIZE_PCT = { Grande: 82, Medio: 55, Pequeno: 28, Niche: 12, Large: 82, Medium: 55, Small: 28 }
 
 export default function Modal({ c, selected, onSelect, onClose }) {
   const isSel = selected.some(s => s.name === c.name)
-
-  const sizeColor = { Grande: '#22c55e', Medio: '#f59e0b', Pequeno: '#6366f1', Niche: '#8b5cf6' }
-  const sizeW = { Grande: '80%', Medio: '55%', Pequeno: '30%', Niche: '15%' }
+  const sizeColor = SIZE_COLOR[c.marketShare?.size] || '#9898a8'
+  const sizePct = SIZE_PCT[c.marketShare?.size] || 20
 
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
 
-        {/* HEADER */}
+        {/* ── HEADER ── */}
         <div className="modal-hd">
-          <div className="modal-hd-row">
-            <div>
+          <div className="modal-hd-top">
+            <div className="modal-hd-left">
               <div className="modal-name-row">
                 <span className="modal-name">{c.name}</span>
                 {c.origin && (
@@ -50,70 +77,53 @@ export default function Modal({ c, selected, onSelect, onClose }) {
               </div>
               <div className="modal-domain">{c.domain}</div>
             </div>
-            <button className="modal-close" onClick={onClose}>&#x2715;</button>
+            <button className="modal-close" onClick={onClose}>✕</button>
           </div>
-          <div className="modal-tagline">{c.tagline}</div>
-          <div className="modal-meta-row">
-            {c.founded && <span className="modal-meta-chip">Est. {c.founded}</span>}
-            {c.positioning && <span className="modal-meta-chip">{c.positioning}</span>}
-            {c.businessModel && <span className="modal-meta-chip">{c.businessModel}</span>}
-            {c.funding?.hasRaised && <span className="modal-meta-chip funded">Captou {c.funding.totalRaised}</span>}
+          {c.tagline && <p className="modal-tagline">{c.tagline}</p>}
+          <div className="modal-chips">
+            {c.founded && <span className="mchip">Est. {c.founded}</span>}
+            {c.positioning && <span className="mchip">{c.positioning}</span>}
+            {c.businessModel && <span className="mchip">{c.businessModel}</span>}
+            {c.funding?.hasRaised && <span className="mchip funded">Captou {c.funding.totalRaised || 'capital'}</span>}
           </div>
         </div>
 
-        {/* BODY */}
+        {/* ── BODY ── */}
         <div className="modal-bd">
 
           {/* Overview */}
           {c.overview && (
-            <Section title="Visao geral">
+            <div className="msec">
+              <Sec title="Visão geral" />
               <p className="ms-text">{c.overview}</p>
-            </Section>
+            </div>
           )}
 
-          {/* STRATEGIC CHARTS ROW */}
-          <div className="charts-row">
+          {/* ── VISUAL METRICS ROW ── */}
+          <div className="metrics-grid">
 
-            {/* Relevance score */}
-            <div className="chart-card">
-              <div className="chart-card-title">Relevancia</div>
-              <div className="radial-wrap">
-                <svg viewBox="0 0 80 80" className="radial-svg">
-                  <circle cx="40" cy="40" r="32" fill="none" stroke="var(--border)" strokeWidth="6" />
-                  <circle
-                    cx="40" cy="40" r="32" fill="none"
-                    stroke="var(--fg)" strokeWidth="6"
-                    strokeDasharray={`${(c.relevanceScore / 100) * 201} 201`}
-                    strokeLinecap="round"
-                    transform="rotate(-90 40 40)"
-                  />
-                </svg>
-                <div className="radial-label">{c.relevanceScore}%</div>
-              </div>
+            {/* Relevância */}
+            <div className="metric-card">
+              <div className="metric-card-title">Relevância</div>
+              <Radial value={c.relevanceScore} label="score" color="#7c6af7" />
             </div>
 
-            {/* Market size */}
+            {/* Tamanho de mercado */}
             {c.marketShare && (
-              <div className="chart-card">
-                <div className="chart-card-title">Tamanho no mercado</div>
-                <div className="market-size-viz">
-                  <div className="ms-bar-wrap">
-                    <div
-                      className="ms-bar-fill"
-                      style={{
-                        width: sizeW[c.marketShare.size] || '20%',
-                        background: sizeColor[c.marketShare.size] || 'var(--fg-3)'
-                      }}
-                    />
-                  </div>
-                  <div className="ms-size-label" style={{ color: sizeColor[c.marketShare.size] }}>
+              <div className="metric-card">
+                <div className="metric-card-title">Mercado</div>
+                <div className="market-viz">
+                  <div className="market-size-label" style={{ color: sizeColor }}>
                     {c.marketShare.size}
                   </div>
+                  <div className="mkt-bar-wrap">
+                    <div className="mkt-bar-fill" style={{ width: `${sizePct}%`, background: sizeColor }} />
+                  </div>
                   {c.marketShare.estimatedShare && (
-                    <div className="ms-share">~{c.marketShare.estimatedShare} market share</div>
+                    <div className="market-sub">~{c.marketShare.estimatedShare} share</div>
                   )}
                   {c.marketShare.clientCount && (
-                    <div className="ms-clients">{c.marketShare.clientCount} clientes</div>
+                    <div className="market-sub">{c.marketShare.clientCount} clientes</div>
                   )}
                 </div>
               </div>
@@ -121,23 +131,21 @@ export default function Modal({ c, selected, onSelect, onClose }) {
 
             {/* SEO */}
             {c.seo && (
-              <div className="chart-card">
-                <div className="chart-card-title">SEO / Visibilidade</div>
+              <div className="metric-card">
+                <div className="metric-card-title">SEO</div>
                 <div className="seo-viz">
                   {c.seo.estimatedMonthlyVisits && (
-                    <div className="seo-metric">
-                      <div className="seo-metric-val">{c.seo.estimatedMonthlyVisits}</div>
-                      <div className="seo-metric-lbl">visitas/mes</div>
+                    <div className="seo-big">{c.seo.estimatedMonthlyVisits}
+                      <span className="seo-big-sub">visitas/mês</span>
                     </div>
                   )}
                   {c.seo.domainAuthority && (
-                    <div className="seo-metric">
-                      <div className="seo-metric-val" style={{ textTransform: 'capitalize' }}>{c.seo.domainAuthority}</div>
-                      <div className="seo-metric-lbl">autoridade</div>
+                    <div className="seo-auth">
+                      Autoridade: <strong>{c.seo.domainAuthority === 'high' || c.seo.domainAuthority === 'alto' ? 'Alta' : c.seo.domainAuthority === 'medium' || c.seo.domainAuthority === 'medio' ? 'Média' : 'Baixa'}</strong>
                     </div>
                   )}
                   {c.seo.topKeywords?.length > 0 && (
-                    <div className="seo-keywords">
+                    <div className="seo-kws">
                       {c.seo.topKeywords.slice(0, 3).map(k => (
                         <span key={k} className="seo-kw">{k}</span>
                       ))}
@@ -150,157 +158,163 @@ export default function Modal({ c, selected, onSelect, onClose }) {
 
           {/* Diferenciais */}
           {c.differentiators?.length > 0 && (
-            <Section title="Diferenciais e recursos">
+            <div className="msec">
+              <Sec title="Diferenciais e recursos" />
               <div className="diff-list">
                 {c.differentiators.map((d, i) => (
                   <div key={i} className="diff-item">
-                    <span className="diff-icon">&#9670;</span>
+                    <span className="diff-dot" />
                     <span>{d}</span>
                   </div>
                 ))}
               </div>
-            </Section>
+            </div>
           )}
 
-          {/* Pricing */}
+          {/* Preços */}
           {c.pricing && (
-            <Section title="Precos e planos">
+            <div className="msec">
+              <Sec title="Preços e planos" />
               {c.pricing.startingAt && (
-                <div className="pricing-starting">A partir de <strong>{c.pricing.startingAt}</strong></div>
+                <p className="pricing-from">A partir de <strong>{c.pricing.startingAt}</strong></p>
               )}
               {c.pricing.plans?.length > 0 && (
-                <div className="plans-grid">
+                <div className="plans-row">
                   {c.pricing.plans.map((p, i) => (
-                    <div key={i} className="plan-card">
+                    <div key={i} className={`plan-card ${i === 1 ? 'plan-highlight' : ''}`}>
                       <div className="plan-name">{p.name}</div>
                       <div className="plan-price">{p.price}</div>
-                      {p.highlight && <div className="plan-highlight">{p.highlight}</div>}
+                      {p.highlight && <div className="plan-desc">{p.highlight}</div>}
                     </div>
                   ))}
                 </div>
               )}
-            </Section>
+            </div>
           )}
 
           {/* Funding */}
           {c.funding?.hasRaised && (
-            <Section title="Aportes e investimentos">
+            <div className="msec">
+              <Sec title="Aportes e investimentos" />
               <div className="funding-row">
-                <div className="funding-stat">
-                  <div className="funding-val">{c.funding.totalRaised || '-'}</div>
-                  <div className="funding-lbl">Total captado</div>
-                </div>
-                <div className="funding-stat">
-                  <div className="funding-val">{c.funding.lastRound || '-'}</div>
-                  <div className="funding-lbl">Ultimo round</div>
-                </div>
+                {c.funding.totalRaised && (
+                  <div className="funding-stat">
+                    <div className="funding-val">{c.funding.totalRaised}</div>
+                    <div className="funding-key">Total captado</div>
+                  </div>
+                )}
+                {c.funding.lastRound && (
+                  <div className="funding-stat">
+                    <div className="funding-val">{c.funding.lastRound}</div>
+                    <div className="funding-key">Último round</div>
+                  </div>
+                )}
                 {c.funding.lastRoundYear && (
                   <div className="funding-stat">
                     <div className="funding-val">{c.funding.lastRoundYear}</div>
-                    <div className="funding-lbl">Ano</div>
+                    <div className="funding-key">Ano</div>
                   </div>
                 )}
               </div>
               {c.funding.investors?.length > 0 && (
-                <div className="investors-list">
-                  {c.funding.investors.map(inv => (
-                    <span key={inv} className="investor-tag">{inv}</span>
-                  ))}
+                <div className="pill-row">
+                  {c.funding.investors.map(inv => <Pill key={inv} variant="investor">{inv}</Pill>)}
                 </div>
               )}
-            </Section>
+            </div>
           )}
 
-          {/* Partners + Clients side by side */}
+          {/* Parceiros + Clientes */}
           <div className="two-col">
             {c.partners?.length > 0 && (
-              <Section title="Parceiros estrategicos">
-                <div className="pill-list">
-                  {c.partners.map(p => <Tag key={p} variant="partner">{p}</Tag>)}
+              <div className="msec">
+                <Sec title="Parceiros" />
+                <div className="pill-row">
+                  {c.partners.map(p => <Pill key={p} variant="partner">{p}</Pill>)}
                 </div>
-              </Section>
+              </div>
             )}
             {c.clientProfiles?.length > 0 && (
-              <Section title="Perfil de clientes">
-                <div className="pill-list">
-                  {c.clientProfiles.map(p => <Tag key={p} variant="client">{p}</Tag>)}
+              <div className="msec">
+                <Sec title="Clientes" />
+                <div className="pill-row">
+                  {c.clientProfiles.map(p => <Pill key={p} variant="client">{p}</Pill>)}
                 </div>
-              </Section>
+              </div>
             )}
           </div>
 
-          {/* Target market */}
+          {/* Mercado alvo */}
           {c.targetMarket && (
-            <Section title="Mercado alvo">
-              <div className="target-grid">
+            <div className="msec">
+              <Sec title="Mercado alvo" />
+              <div className="target-row">
                 {c.targetMarket.segments?.length > 0 && (
                   <div className="target-cell">
-                    <div className="target-lbl">Segmentos</div>
-                    <div className="pill-list">
-                      {c.targetMarket.segments.map(s => <Tag key={s}>{s}</Tag>)}
+                    <div className="target-key">Segmentos</div>
+                    <div className="pill-row">
+                      {c.targetMarket.segments.map(s => <Pill key={s}>{s}</Pill>)}
                     </div>
                   </div>
                 )}
                 {c.targetMarket.geography && (
                   <div className="target-cell">
-                    <div className="target-lbl">Cobertura</div>
+                    <div className="target-key">Cobertura</div>
                     <div className="target-val">{c.targetMarket.geography}</div>
                   </div>
                 )}
                 {c.targetMarket.ambition && (
                   <div className="target-cell">
-                    <div className="target-lbl">Ambicao</div>
+                    <div className="target-key">Ambição</div>
                     <div className="target-val">{c.targetMarket.ambition}</div>
                   </div>
                 )}
               </div>
-            </Section>
+            </div>
           )}
 
-          {/* Strengths / Weaknesses */}
+          {/* Forças e Fraquezas */}
           {(c.strengths?.length > 0 || c.weaknesses?.length > 0) && (
-            <Section title="Forcas e fraquezas">
-              <div className="sw-grid">
+            <div className="msec">
+              <Sec title="Forças e fraquezas" />
+              <div className="sw-row">
                 {c.strengths?.length > 0 && (
-                  <div className="sw-col">
-                    <div className="sw-lbl s">Forcas</div>
+                  <div className="sw-col sw-green">
+                    <div className="sw-header">Forças</div>
                     {c.strengths.map((s, i) => (
-                      <div key={i} className="sw-item">
-                        <span className="sw-sign s">+</span>{s}
-                      </div>
+                      <div key={i} className="sw-item"><span className="sw-icon">+</span>{s}</div>
                     ))}
                   </div>
                 )}
                 {c.weaknesses?.length > 0 && (
-                  <div className="sw-col">
-                    <div className="sw-lbl w">Fraquezas</div>
+                  <div className="sw-col sw-red">
+                    <div className="sw-header">Fraquezas</div>
                     {c.weaknesses.map((w, i) => (
-                      <div key={i} className="sw-item">
-                        <span className="sw-sign w">-</span>{w}
-                      </div>
+                      <div key={i} className="sw-item"><span className="sw-icon">–</span>{w}</div>
                     ))}
                   </div>
                 )}
               </div>
-            </Section>
+            </div>
           )}
 
           {/* Insight */}
           {c.marketInsight && (
-            <Section title="Insight estrategico">
+            <div className="msec">
+              <Sec title="Insight estratégico" />
               <div className="insight-block">{c.marketInsight}</div>
-            </Section>
+            </div>
           )}
 
         </div>
 
-        {/* FOOTER */}
+        {/* ── FOOTER ── */}
         <div className="modal-ft">
-          <button className={`modal-btn ${isSel ? 'remove' : 'add'}`} onClick={() => onSelect(c)}>
-            {isSel ? '- Remover' : '+ Comparar'}
+          <button className={`modal-btn ${isSel ? 'btn-remove' : 'btn-add'}`} onClick={() => onSelect(c)}>
+            {isSel ? '− Remover da comparação' : '+ Comparar'}
           </button>
-          <a href={`https://${c.domain}`} target="_blank" rel="noopener noreferrer" className="modal-link">
-            {c.domain} &#8599;
+          <a href={`https://${c.domain}`} target="_blank" rel="noopener noreferrer" className="modal-ext">
+            {c.domain} ↗
           </a>
         </div>
 
